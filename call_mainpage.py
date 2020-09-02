@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QFileDialog
 from TelloUserInterface import Ui_Form
 from Tello_Drone import *
 import sys
-from os import walk
+from os import walk, system, getcwd
 import time
 
 
@@ -32,11 +32,18 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
         self.Music_Slider.sliderReleased.connect(self.Play_translate)
         self.pushButton_SaveFile.clicked.connect(self.Save_File)
         self.pushButton_ImportFile.clicked.connect(self.Import_File)
+        self.pushButton_ImportMusic.clicked.connect(self.Import_Music)
 
     def vtk_close(self):  # 关闭窗口时同时关闭vtkWidget
         self.vtkWidget.close()
 
     def comobox_init(self):  # 初始化下拉框，将音乐名称填充
+        for dirpath, dirname, file in walk('./resources/music'):
+            pass
+        self.Music_list.addItems(file)
+
+    def comobox_update(self):
+        self.Music_list.clear()
         for dirpath, dirname, file in walk('./resources/music'):
             pass
         self.Music_list.addItems(file)
@@ -130,7 +137,6 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
     def Import_File(self):
         try:
             [file_path, temp] = QFileDialog.getOpenFileName(self, '选择需要导入的文件', './log')
-            print(file_path)
             file = open(file_path, 'r')
             strText = file.read()
             self.textEdit.setText(str(strText))
@@ -139,6 +145,22 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
         else:
             temp = 'OK'
         self.textBrowser.append('>>> ' + 'Import File' + '  [' + temp + ']\n')
+
+    def Import_Music(self):
+        try:
+            [file_path, temp] = QFileDialog.getOpenFileName(self, '选择需要导入的文件', './log')
+            src_path = file_path.replace('/', '\\')
+            target_path = '\\resources\\music\\'
+            cmd = 'copy "' + src_path + '" "' + getcwd() + target_path + '"'
+            system(cmd)
+        except Exception as e:
+            temp = str(e)
+        else:
+            temp = 'OK'
+        if src_path == '':
+            temp = 'Error'
+        self.comobox_update()
+        self.textBrowser.append('>>> ' + 'Import Music' + '  [' + temp + ']\n')
 
     def closeEvent(self, event):
         reply = QtWidgets.QMessageBox.question(self, u'警告', u'确认退出?', QtWidgets.QMessageBox.Yes,
