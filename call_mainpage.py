@@ -42,11 +42,9 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
             pass
         self.Music_list.addItems(file)
 
-    def comobox_update(self):
+    def comobox_update(self):  # 新增音乐后刷新下拉选项
         self.Music_list.clear()
-        for dirpath, dirname, file in walk('./resources/music'):
-            pass
-        self.Music_list.addItems(file)
+        self.comobox_init()
 
     def music_play_init(self):  # 初始化音乐播放器
         self.player = QtMultimedia.QMediaPlayer()
@@ -113,8 +111,8 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
     def Run(self):
         try:
             exec(self.textEdit.toPlainText())
-        except Exception:
-            temp = "Error"
+        except Exception as e:
+            temp = str(e)
         else:
             temp = "OK"
         self.textBrowser.append('>>> ' + self.textEdit.toPlainText() + '  [' + temp + ']\n')

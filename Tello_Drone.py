@@ -1,5 +1,6 @@
 from vedo import *
 from math import pi
+from PyQt5.QtCore import QThread
 
 
 # 针对单个无人机的属性创建类
@@ -20,7 +21,7 @@ class Drone():
 class Drone_fly():
     def __init__(self, vtkWidget, tello_list: list = []):
         self.vp = Plotter(qtWidget=vtkWidget, bg='light gray')
-        self.world = Box(pos=[0, 0, 0], length=30, width=15, height=8).wireframe()
+        self.world = Box(pos=[0, 0, 0], length=64, width=36, height=20).wireframe()
         template_drone = load('resources/model/dobby03.stl').normalize().rotateZ(-90).addTrail()
         # text = Marker(pos=[0, 0, 5], symbol='01').scale(5).rotateX(90)
         self.drone_para = tello_list
@@ -43,7 +44,7 @@ class Drone_fly():
                 self.drone_list[i-1].addPos(x, y, z)
                 self.drone_tag[i-1].addPos(x, y, z)
         if sync:
-            self.vp.interactor.Render()
+            self.update()
 
     def drone_rotate(self, yaw: float = 0, pitch: float = 0, roll: float = 0, drone_list: list = [], sync: bool = True):
         if len(drone_list) == 0:
