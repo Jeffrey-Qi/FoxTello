@@ -1,8 +1,6 @@
 from PyQt5 import QtCore, QtWidgets, QtMultimedia
-from PyQt5.QtWidgets import QApplication, QFileDialog
+from PyQt5.QtWidgets import QFileDialog
 from TelloUserInterface import Ui_Form
-from Tello_Drone import *
-import sys
 from os import walk, system, getcwd
 import time
 
@@ -17,7 +15,6 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
     def __init__(self, parent=None):
         super(MainPageWindow, self).__init__(parent)
         self.setupUi(self)
-        self.show()
         self.comobox_init()
         self.music_play_init()
         self.connect()
@@ -161,7 +158,7 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
         self.textBrowser.append('>>> ' + 'Import Music' + '  [' + temp + ']\n')
 
     def closeEvent(self, event):
-        reply = QtWidgets.QMessageBox.question(self, u'警告', u'确认退出?', QtWidgets.QMessageBox.Yes,
+        reply = QtWidgets.QMessageBox.question(self, u'提示', u'确认退出?', QtWidgets.QMessageBox.Yes,
                                               QtWidgets.QMessageBox.No)
         # QtWidgets.QMessageBox.question(self,u'弹窗名',u'弹窗内容',选项1,选项2)
         if reply == QtWidgets.QMessageBox.Yes:
@@ -169,15 +166,4 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
         else:
             event.ignore()  # 忽视点击X事件
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    demo = MainPageWindow()
-    tello_list = []
-    color = ['red', 'gold', 'blue', 'green', 'c']
-    for i in range(5):
-        temp = Drone(color[i])
-        tello_list.append(temp)
 
-    tello = Drone_fly(demo.vtkWidget, tello_list)
-    app.aboutToQuit.connect(demo.vtk_close)
-    sys.exit(app.exec_())

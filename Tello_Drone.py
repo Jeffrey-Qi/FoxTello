@@ -1,13 +1,15 @@
 from vedo import *
 from math import pi
-from PyQt5.QtCore import QThread
 
 
 # 针对单个无人机的属性创建类
 class Drone():
-    def __init__(self, color='gold', yaw=-90):
+    def __init__(self, color='gold', yaw=-90, x=0, y=0, z=0):
         self.color = color
         self.yaw = yaw
+        self.x = x
+        self.y = y
+        self.z = z
 
     def update_yaw(self, angle):
         self.yaw += angle
