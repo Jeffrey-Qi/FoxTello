@@ -150,9 +150,9 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Tello无人机编队与仿真系统"))
-        self.pushButton_StepRun.setText(_translate("Form", "仿真"))
-        self.pushButton_Run.setText(_translate("Form", "运行"))
-        self.pushButton_pause.setText(_translate("Form", "暂停"))
+        self.pushButton_StepRun.setText(_translate("Form", "初始化路径"))
+        self.pushButton_Run.setText(_translate("Form", "子窗口运行"))
+        self.pushButton_pause.setText(_translate("Form", "主窗口运行"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Form", "仿真模拟"))
         self.Music_play.setText(_translate("Form", "开始播放"))
         self.Music_play_pause.setText(_translate("Form", "暂停"))

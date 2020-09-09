@@ -67,8 +67,8 @@ class Drone_fly():
         return [x_worldaxis, y_worldaxis]
 
     def update(self):
-        self.vp.interactor.Render()
-        # self.vp.show()
+        # self.vp.interactor.Render()
+        self.vp.show()
 
     def up(self, height: float = 0, drone_list: list = [], speed: float = 5):
         if len(drone_list) == 0:

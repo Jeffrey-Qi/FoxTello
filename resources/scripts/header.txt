@@ -1,0 +1,23 @@
+from Tello_Drone2 import *
+
+tello_list = []
+color = ['red', 'gold', 'blue', 'green', 'c']
+for i in range(5):
+    temp = Drone(color[i])
+    tello_list.append(temp)
+tello = Drone_fly(tello_list=tello_list)
+
+
+def buttonfunc():
+    exit()
+
+bu = tello.vp.addButton(
+    fnc=buttonfunc,
+    pos=[0.5, 0.05],
+    states=["Close"],
+    c=["w"],
+    bc=["dg"],
+    size=20,
+    bold=True,
+    italic=False
+)

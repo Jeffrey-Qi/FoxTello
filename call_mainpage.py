@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtWidgets, QtMultimedia
-from PyQt5.QtWidgets import QApplication, QFileDialog
+from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox
 from TelloUserInterface import Ui_Form
 from Tello_Drone import *
 import sys
@@ -25,6 +25,7 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
     def connect(self):  # 设置槽函数与按钮连接
         self.pushButton_StepRun.clicked.connect(self.Step_Run)
         self.pushButton_Run.clicked.connect(self.Run)
+        self.pushButton_pause.clicked.connect(self.Pause)
         self.Music_play.clicked.connect(self.music_play)
         self.player.positionChanged.connect(self.Play_State)
         self.Music_play_pause.clicked.connect(self.Play_Pause)
@@ -33,6 +34,7 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
         self.pushButton_SaveFile.clicked.connect(self.Save_File)
         self.pushButton_ImportFile.clicked.connect(self.Import_File)
         self.pushButton_ImportMusic.clicked.connect(self.Import_Music)
+
 
     def vtk_close(self):  # 关闭窗口时同时关闭vtkWidget
         self.vtkWidget.close()
@@ -79,7 +81,7 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
         time = int(self.player.duration() / 1000)
         self.Music_label.setText("%s/%s" % (self.formatTime(dur), self.formatTime(time)))
         if time != 0 and self.Play_flag == 1:
-            self.Music_Slider.setValue(int(dur/time*100))
+            self.Music_Slider.setValue(int(dur / time * 100))
 
     def Play_translate(self):  # 用进度条控制音乐播放
         # self.player.pause()
@@ -100,24 +102,52 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
 
     def Step_Run(self):
         try:
-            eval('tello.' + self.textEdit.toPlainText())
+            loaclpath = getcwd() + '\\resources\\scripts'
+            Tello_bat = open(loaclpath + '\\Tello.bat', 'w')
+            strText_tello = '@echo off\nD:\ncd ' + getcwd() + '\nstart cmd /K "python call_mainpage.py & exit"'
+            Tello_bat.write(strText_tello)
+            Tello_bat.close()
+            Render_bat = open(loaclpath + '\\Render.bat', 'w')
+            strText_render = '@echo off\nD:\ncd ' + getcwd() + '\nstart cmd /K ".python TestDemo.py & exit"'
+            Render_bat.write(strText_render)
+            Render_bat.close()
         except Exception:
             temp = "Error"
         else:
             temp = "OK"
         # self.textBrowser.setText(str(temp))
-        self.textBrowser.append('>>> ' + 'tello.' + self.textEdit.toPlainText() + '  [' + temp + ']')
+        self.textBrowser.append('>>> ' + '初始化路径' + self.textEdit.toPlainText() + '  [' + temp + ']')
 
     def Run(self):
         try:
-            exec(self.textEdit.toPlainText())
+            command_str = self.textEdit.toPlainText()
+            template_file = open('./resources/scripts/header.txt', 'r')
+            headerText = template_file.read()
+            target_file = open('./TestDemo.py', 'w')
+            strText = headerText + '\n' + command_str + '\n\ninteractive()\n'
+            target_file.write(strText)
+            template_file.close()
+            target_file.close()
+            # system(getcwd() + '\\resources\\scripts\\Render.bat')
+            system('python ' + getcwd() + '\\TestDemo.py')
         except Exception as e:
             temp = str(e)
         else:
             temp = "OK"
         self.textBrowser.append('>>> ' + self.textEdit.toPlainText() + '  [' + temp + ']\n')
 
-    # def Pause(self):
+    def Pause(self):
+        try:
+            if len(self.textEdit.toPlainText()) > 20:
+                QMessageBox.information(self, '提示', '较复杂的语句请在子窗口中进行仿真', QMessageBox.Yes)
+                return 0
+            else:
+                exec(self.textEdit.toPlainText())
+        except Exception as ex:
+            temp = str(ex)
+        else:
+            temp = "OK"
+        self.textBrowser.append('>>> ' + self.textEdit.toPlainText() + '  [' + temp + ']\n')
 
     def Save_File(self):
         try:
@@ -161,13 +191,14 @@ class MainPageWindow(QtWidgets.QWidget, Ui_Form):
         self.textBrowser.append('>>> ' + 'Import Music' + '  [' + temp + ']\n')
 
     def closeEvent(self, event):
-        reply = QtWidgets.QMessageBox.question(self, u'警告', u'确认退出?', QtWidgets.QMessageBox.Yes,
-                                              QtWidgets.QMessageBox.No)
+        reply = QtWidgets.QMessageBox.question(self, u'提示', u'确认退出?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
         # QtWidgets.QMessageBox.question(self,u'弹窗名',u'弹窗内容',选项1,选项2)
         if reply == QtWidgets.QMessageBox.Yes:
             event.accept()  # 关闭窗口
         else:
             event.ignore()  # 忽视点击X事件
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
